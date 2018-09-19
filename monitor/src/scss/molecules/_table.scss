@@ -1,0 +1,117 @@
+.app-header {
+  position: fixed;
+  top: 0;
+
+  .app-head {
+    justify-content: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    border-color: #fff;
+
+    &-model {
+      flex: 3;
+    }
+
+    &-producer {
+      flex: 3;
+    }
+
+    &-status {
+      flex: 1.2;
+    }
+  }
+}
+
+.app-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100vw;
+  height: 10vh;
+  font-size: 1.5vw;
+
+  span {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 200px;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid #333;
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .app-cell {
+    &-DEADLINE {
+      justify-content: center;
+    }
+
+    &-MODEL {
+      flex: 3;
+    }
+
+    &-PRODUCER {
+      flex: 3;
+    }
+
+    &-QUANTITY {
+      justify-content: flex-end;
+    }
+
+    &-STATUS {
+      justify-content: center;
+      flex: 1.2;
+    }
+  }
+}
+
+.deadline-lost {
+  color: #ff0000;
+}
+
+.finished {
+  background-color: #DFECD7;
+}
+
+.planned {
+  color: #00f;
+}
+
+.processing {
+  color: #008000;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  height: 100%;
+  padding-top: 10vh;
+  font-weight: 600;
+  overflow: auto;
+}
+
+@media only screen and (max-width: 768px) {
+  .app-row {
+    height: 50px;
+
+    span {
+      min-width: 70px;
+    }
+  }
+
+  .table {
+    font-size: 16px;
+    overflow: auto;
+  }
+}
