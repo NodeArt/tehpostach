@@ -7,7 +7,6 @@ let password = sessionStorage.getItem("password") || askPassword();
 function askUsername(message) {
   return prompt(message || 'Please, enter your username');
 }
-
 function askPassword(message) {
   return prompt(message || 'Please, enter your password');
 }
@@ -15,7 +14,15 @@ function askPassword(message) {
 function setCredentials() {
   sessionStorage.setItem("username", username);
   sessionStorage.setItem("password", password);
-  headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
+
+  try {
+    headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
+  }
+  catch (e) {
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("password");
+    window.alert("error in password, \n" + e);
+  }
 }
 
 if (username && password) {
@@ -82,7 +89,7 @@ function renderTable(refsToSpan, data, columnConfig) {
         cell[j].classList.add('finished');
       } else if (data[i][columnConfig[j]] === "У виробництві") {
         cell[j].classList.add('processing');
-      } else if (columnsConfig[j] === "DEADLINE" && new Date(data[i][columnConfig[j]]) < new Date()) {
+      } else if (columnsConfig[j] === "DEADLINE" && data[i]['REDCOLOUR'] === 1) {
         cell[j].classList.add('deadline-lost');
       }
       cell[j].innerHTML = data[i][columnConfig[j]];
