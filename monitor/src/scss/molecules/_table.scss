@@ -5,12 +5,12 @@
   .app-head {
     justify-content: center;
     padding: 20px;
-    background-color: #333;
-    color: #fff;
+    background-color: $color-accent;
+    color: $color-text;
     font-weight: 600;
     text-align: center;
     text-transform: uppercase;
-    border-color: #fff;
+    border-color: $color-text;
 
     &-model {
       flex: 3;
@@ -31,8 +31,8 @@
   justify-content: flex-start;
   align-items: center;
   width: 100vw;
-  height: 10vh;
-  font-size: 1.25vw;
+  height: 5vh;
+  font-size: 1vw;
 
   span {
     display: flex;
@@ -43,9 +43,13 @@
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
-    border: 2px solid #333;
+    border: 2px solid $color-accent;
     border-top: 0;
     border-left: 0;
+  }
+  
+  &:nth-child(odd) {
+    background-color: $color-secondary;
   }
 
   .app-cell {
@@ -77,7 +81,7 @@
 }
 
 .finished {
-  background-color: #DFECD7;
+  color: #DFECD7;
 }
 
 .planned {
@@ -96,8 +100,9 @@
   width: 100vw;
   min-height: 100vh;
   height: 100%;
-  padding-top: 10vh;
+  padding-top: 5vh;
   font-weight: 600;
+  background-color: $color-background;
   overflow: auto;
 }
 
