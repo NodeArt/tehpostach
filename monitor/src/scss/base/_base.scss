@@ -1,7 +1,7 @@
 @viewport { width: device-width; }
 
 html {
-  background-color: $color-background;
+  background-color: #fff;
   box-sizing: border-box;
   height: 100%;
 }
@@ -22,7 +22,7 @@ body {
 
 a {
   background: transparent;
-  color: $color-link;
+  color: #fff;
   text-decoration: none;
   transition: color .2s;
 }
