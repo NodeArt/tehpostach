@@ -10,11 +10,9 @@ let password = "Ne5mi1vu";
 function askUsername(message) {
   return prompt(message || 'Please, enter your username');
 }
-
 function askPassword(message) {
   return prompt(message || 'Please, enter your password');
 }
-
 function setCredentials() {
   sessionStorage.setItem("username", username);
   sessionStorage.setItem("password", password);
@@ -50,10 +48,13 @@ const columnsConfig = [
   "STATUS",
   "DEADLINE"
 ];
+const docHeight = Math.max(
+    document.body.scrollHeight, document.documentElement.scrollHeight,
+    document.body.offsetHeight, document.documentElement.offsetHeight,
+    document.body.clientHeight, document.documentElement.clientHeight),
+    screenHeight = document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
 
 table.classList.add('table');
-
-fetchData();
 
 function fetchData() {
   fetch('https://cors-escape.herokuapp.com/https://1cweb.cloudzz.com/tehpostach/hs/monitor', {
@@ -75,7 +76,6 @@ function fetchData() {
         fetchData();
       });
 }
-
 function returnTime() {
   const options = {
     year: 'numeric',
@@ -89,12 +89,13 @@ function returnTime() {
   };
   return new Date().toLocaleString('uk', options);
 }
-
 function createStatusBar() {
   let statusBar = document.createElement('div'),
       clock = document.createElement('span'),
       paginatorBox = document.createElement('span');
+
   statusBar.className = 'status-bar';
+  clock.className = 'clock';
   paginatorBox.className = 'paginator';
 
   statusBar.appendChild(clock);
@@ -106,29 +107,24 @@ function createStatusBar() {
     }, 1000);
   }
 
-  // function paginator() {
-  //   let numberOfPages = Math.ceil(docHeight / screenHeight);
-  //   paginatorBox.innerText = numberOfPages;
-  // }
-
   const paginatorObj = {
     getNumberOfPages: function() {
-      return Math.ceil(docHeight / screenHeight);
+      return Math.ceil(docHeight / screenHeight) + 1;
     },
     getCurrentPage: function () {
-      return Math.round(docHeight / window.pageYOffset);
+      console.log('GETTIME');
+      return Math.ceil(window.pageYOffset / docHeight) + 1;
     },
     setData: function (span) {
       span.innerText = `Page: ${this.getCurrentPage()}/${this.getNumberOfPages()}`;
     }
   };
 
-  setInterval(paginatorObj.setData(paginatorBox), 1000);
+  setInterval(() => {paginatorObj.setData(paginatorBox)}, 1000);
 
   updateTime();
   return statusBar;
 }
-
 function createTable(table, headerConfig, columnsConfig, tableData) {
   const refsToSpan = generateEmptyRows({table, rowsCount: tableData.length, columnsConfig});
   table.insertBefore(createHeaderRow(headerConfig), table.firstChild);
@@ -136,7 +132,6 @@ function createTable(table, headerConfig, columnsConfig, tableData) {
   renderTable(refsToSpan, tableData, columnsConfig);
   return refsToSpan;
 }
-
 function renderTable(refsToSpan, data, columnConfig) {
   for (let i = 0; i < refsToSpan.length; i++) {
     const cell = refsToSpan[i];
@@ -154,7 +149,6 @@ function renderTable(refsToSpan, data, columnConfig) {
     }
   }
 }
-
 function createRow(columns) {
   const row = document.createElement('div');
   row.classList.add('app-row');
@@ -167,7 +161,6 @@ function createRow(columns) {
   }
   return {row, cells};
 }
-
 function createHeaderRow(config) {
   const {row, cells} = createRow(config);
   row.classList.add('app-header');
@@ -178,7 +171,6 @@ function createHeaderRow(config) {
   }
   return row;
 }
-
 function generateEmptyRows({table, rowsCount, columnsConfig}) {
   const rowsData = [];
   for (let i = 0; i < rowsCount; i++) {
@@ -188,27 +180,18 @@ function generateEmptyRows({table, rowsCount, columnsConfig}) {
   }
   return rowsData;
 }
-
-const docHeight = Math.max(
-    document.body.scrollHeight, document.documentElement.scrollHeight,
-    document.body.offsetHeight, document.documentElement.offsetHeight,
-    document.body.clientHeight, document.documentElement.clientHeight),
-    screenHeight = document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
-
 function scrollOneScreen() {
   window.scrollTo({
     top: window.pageYOffset + screenHeight,
     behavior: "smooth"
   });
 }
-
 function scrollToTop() {
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
 }
-
 function scrolling() {
   let numberOfPages = Math.ceil(docHeight / screenHeight);
 
@@ -223,5 +206,7 @@ function scrolling() {
     }
   }, 2000);
 }
+
+fetchData();
 
 scrolling();
