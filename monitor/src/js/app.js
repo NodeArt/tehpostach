@@ -1,26 +1,28 @@
 let headers = new Headers();
 headers.set('Authorization', '');
 
-// let username = sessionStorage.getItem("username") || askUsername();
-// let password = sessionStorage.getItem("password") || askPassword();
-//
-let username = "HService";
-let password = "Ne5mi1vu";
+let username = sessionStorage.getItem("username") || askUsername();
+let password = sessionStorage.getItem("password") || askPassword();
+
+const MS_IN_A_TICK = 1000;
+const NUMBER_OF_TICKS_SCROLL = 6;
+const NUMBER_OF_SEC_TO_FETCH = 60;
 
 function askUsername(message) {
   return prompt(message || 'Please, enter your username');
 }
+
 function askPassword(message) {
   return prompt(message || 'Please, enter your password');
 }
+
 function setCredentials() {
   sessionStorage.setItem("username", username);
   sessionStorage.setItem("password", password);
 
   try {
     headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
-  }
-  catch (e) {
+  } catch (e) {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("password");
     window.alert("error in password, \n" + e);
@@ -31,7 +33,7 @@ if (username && password) {
   setCredentials();
 }
 
-const table = document.createElement('div');
+let fetchTime, statusTime, currentTick = 0;
 const headerConfig = [
   "model",
   "order",
@@ -48,34 +50,60 @@ const columnsConfig = [
   "STATUS",
   "DEADLINE"
 ];
-const docHeight = Math.max(
-    document.body.scrollHeight, document.documentElement.scrollHeight,
-    document.body.offsetHeight, document.documentElement.offsetHeight,
-    document.body.clientHeight, document.documentElement.clientHeight),
-    screenHeight = document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
+const table = document.createElement('div');
+const dataRows = document.createElement('div');
 
-table.classList.add('table');
+function initTable() {
+  table.classList.add('table');
+  document.body.appendChild(table);
+  dataRows.classList.add('app-data-rows');
+  table.appendChild(dataRows);
+  createTable(table, headerConfig);
+}
+
+initTable();
+
+const docHeight = () =>
+        Math.max(
+            document.body.scrollHeight, document.documentElement.scrollHeight,
+            document.body.offsetHeight, document.documentElement.offsetHeight,
+            document.body.clientHeight, document.documentElement.clientHeight
+        ),
+    screenHeight = () => document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
 
 function fetchData() {
   fetch('https://cors-escape.herokuapp.com/https://1cweb.cloudzz.com/tehpostach/hs/monitor', {
     method: 'GET',
     headers: headers
   })
-      .then((response) => response.json())
+      .then((response) => {
+        if(response.status === 200) {
+          return response.json();
+        } else {
+          throw response;
+        }
+      })
       .then((responseJson) => {
-        table.innerText = '';
-        document.body.appendChild(table);
-        createTable(table, headerConfig, columnsConfig, responseJson);
-        setTimeout(fetchData, 60000);
+        fillDataRows(dataRows, columnsConfig, responseJson);
+        resetPage();
+
+        fetchTime && clearTimeout(fetchTime);
+        fetchTime = setTimeout(fetchData, NUMBER_OF_SEC_TO_FETCH * 1000);
       })
       .catch((error) => {
-        console.error(error);
-        username = askUsername('You have entered an invalid username, enter valid one');
-        password = askPassword('Now enter the correct password, please');
-        setCredentials();
-        fetchData();
+        if(error && error.status && (error.status >= 400 && error.status < 500) ) {
+          username = askUsername('You have entered an invalid username, enter valid one');
+          password = askPassword('Now enter the correct password, please');
+          if(username && password) {
+            setCredentials();
+            fetchData();
+          }
+        } else {
+          console.error(error);
+        }
       });
 }
+
 function returnTime() {
   const options = {
     year: 'numeric',
@@ -89,6 +117,33 @@ function returnTime() {
   };
   return new Date().toLocaleString('uk', options);
 }
+
+const paginatorObj = {
+  getNumberOfPages: function() {
+    return Math.ceil(docHeight() / screenHeight());
+  },
+  getCurrentPage: function() {
+    return Math.ceil(window.pageYOffset / screenHeight()) + 1;
+  },
+  setData: function(span) {
+    span.innerText = `Page: ${this.getCurrentPage()}/${this.getNumberOfPages()}`;
+  },
+  updatePage: function(paginatorBox, clock) {
+    this.setData(paginatorBox);
+    clock.innerText = returnTime();
+  }
+};
+
+function tickAClock(paginatorBox, clock) {
+  statusTime && clearTimeout(statusTime);
+  statusTime = setTimeout(() => {
+    currentTick = (currentTick + 1) % NUMBER_OF_TICKS_SCROLL;
+    currentTick || scrolling();
+    paginatorObj.updatePage(paginatorBox, clock);
+    tickAClock(paginatorBox, clock);
+  }, MS_IN_A_TICK);
+}
+
 function createStatusBar() {
   let statusBar = document.createElement('div'),
       clock = document.createElement('span'),
@@ -101,37 +156,22 @@ function createStatusBar() {
   statusBar.appendChild(clock);
   statusBar.appendChild(paginatorBox);
 
-  function updateTime() {
-    setInterval(() => {
-      clock.innerText = returnTime();
-    }, 1000);
-  }
+  tickAClock(paginatorBox, clock);
 
-  const paginatorObj = {
-    getNumberOfPages: function() {
-      return Math.ceil(docHeight / screenHeight) + 1;
-    },
-    getCurrentPage: function () {
-      console.log('GETTIME');
-      return Math.ceil(window.pageYOffset / docHeight) + 1;
-    },
-    setData: function (span) {
-      span.innerText = `Page: ${this.getCurrentPage()}/${this.getNumberOfPages()}`;
-    }
-  };
-
-  setInterval(() => {paginatorObj.setData(paginatorBox)}, 1000);
-
-  updateTime();
   return statusBar;
 }
-function createTable(table, headerConfig, columnsConfig, tableData) {
-  const refsToSpan = generateEmptyRows({table, rowsCount: tableData.length, columnsConfig});
+
+function createTable(table, headerConfig) {
   table.insertBefore(createHeaderRow(headerConfig), table.firstChild);
   table.appendChild(createStatusBar());
-  renderTable(refsToSpan, tableData, columnsConfig);
-  return refsToSpan;
 }
+
+function fillDataRows(dataRows, columnsConfig, tableData) {
+  dataRows.innerText = '';
+  const refsToSpan = generateEmptyRows({ dataRows, rowsCount: tableData.length, columnsConfig });
+  renderTable(refsToSpan, tableData, columnsConfig);
+}
+
 function renderTable(refsToSpan, data, columnConfig) {
   for (let i = 0; i < refsToSpan.length; i++) {
     const cell = refsToSpan[i];
@@ -149,6 +189,7 @@ function renderTable(refsToSpan, data, columnConfig) {
     }
   }
 }
+
 function createRow(columns) {
   const row = document.createElement('div');
   row.classList.add('app-row');
@@ -159,10 +200,17 @@ function createRow(columns) {
     cells.push(cell);
     row.appendChild(cell);
   }
-  return {row, cells};
+  return {
+    row,
+    cells
+  };
 }
+
 function createHeaderRow(config) {
-  const {row, cells} = createRow(config);
+  const {
+    row,
+    cells
+  } = createRow(config);
   row.classList.add('app-header');
   for (let i = 0; i < config.length; i++) {
     cells[i].innerText = config[i];
@@ -171,42 +219,31 @@ function createHeaderRow(config) {
   }
   return row;
 }
-function generateEmptyRows({table, rowsCount, columnsConfig}) {
+
+function generateEmptyRows({dataRows, rowsCount, columnsConfig}) {
   const rowsData = [];
   for (let i = 0; i < rowsCount; i++) {
-    const {row, cells} = createRow(columnsConfig);
-    table.appendChild(row);
+    const { row, cells } = createRow(columnsConfig);
+    dataRows.appendChild(row);
     rowsData.push(cells);
   }
   return rowsData;
 }
-function scrollOneScreen() {
+
+function scrollToSmooth(goto) {
   window.scrollTo({
-    top: window.pageYOffset + screenHeight,
+    top: (typeof goto !== 'number') ? 0 : goto,
     behavior: "smooth"
   });
 }
-function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+function resetPage() {
+  scrollToSmooth();
+  currentTick = 0;
 }
+
 function scrolling() {
-  let numberOfPages = Math.ceil(docHeight / screenHeight);
-
-  setInterval(() => {
-    console.log(numberOfPages);
-    scrollOneScreen();
-    numberOfPages--;
-
-    if (numberOfPages < 0) {
-      scrollToTop();
-      numberOfPages = Math.ceil(docHeight / screenHeight);
-    }
-  }, 2000);
+  scrollToSmooth(window.innerHeight + window.pageYOffset >= docHeight() ? 0 : window.pageYOffset + screenHeight());
 }
 
 fetchData();
-
 scrolling();
