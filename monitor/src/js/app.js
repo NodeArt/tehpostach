@@ -72,7 +72,7 @@ const docHeight = () =>
     screenHeight = () => document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
 
 function fetchData() {
-  fetch('https://cors-escape.herokuapp.com/https://1cweb.cloudzz.com/tehpostach/hs/monitor', {
+  fetch('https://1cweb.cloudzz.com/tehpostach/hs/monitor', {
     method: 'GET',
     headers: headers
   })
@@ -103,7 +103,6 @@ function fetchData() {
         }
       });
 }
-
 function returnTime() {
   const options = {
     year: 'numeric',
@@ -117,7 +116,6 @@ function returnTime() {
   };
   return new Date().toLocaleString('uk', options);
 }
-
 const paginatorObj = {
   getNumberOfPages: function() {
     return Math.ceil(docHeight() / screenHeight());
@@ -143,7 +141,6 @@ function tickAClock(paginatorBox, clock) {
     tickAClock(paginatorBox, clock);
   }, MS_IN_A_TICK);
 }
-
 function createStatusBar() {
   let statusBar = document.createElement('div'),
       clock = document.createElement('span'),
@@ -160,18 +157,15 @@ function createStatusBar() {
 
   return statusBar;
 }
-
 function createTable(table, headerConfig) {
   table.insertBefore(createHeaderRow(headerConfig), table.firstChild);
   table.appendChild(createStatusBar());
 }
-
 function fillDataRows(dataRows, columnsConfig, tableData) {
   dataRows.innerText = '';
   const refsToSpan = generateEmptyRows({ dataRows, rowsCount: tableData.length, columnsConfig });
   renderTable(refsToSpan, tableData, columnsConfig);
 }
-
 function renderTable(refsToSpan, data, columnConfig) {
   for (let i = 0; i < refsToSpan.length; i++) {
     const cell = refsToSpan[i];
@@ -189,7 +183,6 @@ function renderTable(refsToSpan, data, columnConfig) {
     }
   }
 }
-
 function createRow(columns) {
   const row = document.createElement('div');
   row.classList.add('app-row');
@@ -205,7 +198,6 @@ function createRow(columns) {
     cells
   };
 }
-
 function createHeaderRow(config) {
   const {
     row,
@@ -219,7 +211,6 @@ function createHeaderRow(config) {
   }
   return row;
 }
-
 function generateEmptyRows({dataRows, rowsCount, columnsConfig}) {
   const rowsData = [];
   for (let i = 0; i < rowsCount; i++) {
@@ -229,7 +220,6 @@ function generateEmptyRows({dataRows, rowsCount, columnsConfig}) {
   }
   return rowsData;
 }
-
 function scrollToSmooth(goto) {
   window.scrollTo({
     top: (typeof goto !== 'number') ? 0 : goto,
@@ -240,7 +230,6 @@ function resetPage() {
   scrollToSmooth();
   currentTick = 0;
 }
-
 function scrolling() {
   scrollToSmooth(window.innerHeight + window.pageYOffset >= docHeight() ? 0 : window.pageYOffset + screenHeight());
 }
