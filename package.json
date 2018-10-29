@@ -1,9 +1,9 @@
 {
-  "name": "change",
-  "title": "change",
-  "description": "change this",
+  "name": "tehpostach.monitor",
+  "title": "monitor",
+  "description": "Orders' monitor for tehpostach factory",
   "author": {
-    "name": "change this"
+    "name": "Danil Nesterenko"
   },
   "version": "0.0.1",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "scripts": {
     "gulp": "gulp",
     "build": "gulp build",
-    "deploy": "npm run build && firebase deploy --only hosting"
+    "deploy": "npm run build && firebase deploy"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
