@@ -5,7 +5,7 @@ let username = sessionStorage.getItem("username") || askUsername();
 let password = sessionStorage.getItem("password") || askPassword();
 
 const MS_IN_A_TICK = 1000;
-const NUMBER_OF_TICKS_SCROLL = 6;
+const NUMBER_OF_TICKS_SCROLL = 10;
 const NUMBER_OF_SEC_TO_FETCH = 60;
 
 function askUsername(message) {
