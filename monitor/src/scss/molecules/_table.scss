@@ -76,6 +76,13 @@
   }
 }
 
+.clock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+}
+
 .deadline-lost {
   color: #ff0000;
 }
@@ -85,11 +92,34 @@
 }
 
 .planned {
-  color: #00f;
+  color:  #7a558c;
 }
 
 .processing {
   color: #008000;
+}
+
+.paginator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 40%;
+  color: #fff;
+}
+
+.status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 5vh;
+  background-color: inherit;
+  text-transform: capitalize;
+  border-top: 2px solid #fff;
 }
 
 .table {
@@ -100,7 +130,7 @@
   width: 100vw;
   min-height: 100vh;
   height: 100%;
-  padding-top: 5vh;
+  padding: 5vh 0;
   font-weight: 600;
   background-color: $color-background;
   overflow: auto;
