@@ -3,13 +3,14 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Danil Nesterenko -- JS Developer -- <d.nesterenko@nodeart.io>
+    Sergei Chelishev -- 1C Developer -- <biaselbox@gmail.com>
 
 # THANKS
 
-    <name>
+    Nosov Konstantin -- <nosov@nodeart.io>, Roman Padlyak <roman@tehpostach.com>
 
 # TECHNOLOGY COLOPHON
 
     CSS3, HTML5
-    Apache Server Configs, jQuery, Modernizr, Normalize.css
+    JavaScript, 1C, REST, Gulp, WebPack, FireBase
