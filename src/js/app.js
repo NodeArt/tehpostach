@@ -4,6 +4,11 @@ headers.set('Authorization', '');
 let username = sessionStorage.getItem("username") || askUsername();
 let password = sessionStorage.getItem("password") || askPassword();
 
+
+let MONITOR_URL = "ENV_MONITOR_URL";
+
+console.log("MONITOR_URL", MONITOR_URL);
+
 const MS_IN_A_TICK = 1000;
 const NUMBER_OF_TICKS_SCROLL = 10;
 const NUMBER_OF_SEC_TO_FETCH = 60;
@@ -72,7 +77,7 @@ const docHeight = () =>
     screenHeight = () => document.documentElement.clientHeight - document.documentElement.clientHeight / 10;
 
 function fetchData() {
-  fetch('https://1cweb.cloudzz.com/tehpostach/hs/monitor', {
+  fetch(MONITOR_URL, {
     method: 'GET',
     headers: headers
   })

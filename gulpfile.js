@@ -24,6 +24,7 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     webpack = require('webpack-stream'),
     UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+    ReplacePlugin = require('webpack-plugin-replace');
 
 var bases = {
     app: 'src/',
@@ -171,6 +172,15 @@ gulp.task('js-app', function () {
                             drop_console: true,
                             unsafe: true
                         }
+                    }
+                }),
+                new ReplacePlugin({
+                    exclude: [
+                      /node_modules/,
+                      filepath => filepath.includes('ignore')
+                    ],
+                    values: {
+                        ENV_MONITOR_URL: process.env["MONITOR_URL"]
                     }
                 })
             ]
